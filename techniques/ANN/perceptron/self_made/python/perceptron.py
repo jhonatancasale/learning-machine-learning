@@ -13,6 +13,7 @@
 # Create date Wed  8 Mar 13:32:21 BRT 2017
 """
 
+
 from numpy import array, dot, random
 import matplotlib.pyplot as plt
 
@@ -52,13 +53,14 @@ def build_dataset(filename):
         (array([1, 1, 1]), 1),
     ]
 
+
 def train(training_set, learning_rate=.1, max_iterations=1e4, error=1e-2):
     """
     (list [, double] [, int] [, int]) -> (list, list)
 
     Operate over the training set until the cost function produces an error
-    lesser than the (optional) given param `error`. In this case, the functin
-    returns a tuple with `weigths` adjusted values and a list containing (0,
+    lesser than the (optional) given param `error`. In this case, the function
+    returns a tuple with `weights` adjusted values and a list containing (0,
     100] computed average errors per iteration
 
     Otherwise, return a tuple with None and the list with the first 100 average
@@ -77,7 +79,7 @@ def train(training_set, learning_rate=.1, max_iterations=1e4, error=1e-2):
             diff = expected_output - f_activation(dot(sample, weigths))
             squared_error += diff ** 2
 
-            # Update the values of weigths
+            # Update the values of weights
             weigths = weigths - learning_rate * (2 * diff * -sample)
         squared_error /= len(training_set)
         if i < 100:
@@ -114,7 +116,7 @@ def converged(dataset, weigths):
     (list, list) -> bool
 
     Checks if the expected output from each entry from the given param
-    `dataset` are equal to the obtained output using the given param `weigths`
+    `dataset` are equal to the obtained output using the given param `weights`
     """
 
 
@@ -124,6 +126,7 @@ def converged(dataset, weigths):
         if expected_output != f_activation(dot(sample, weigths)):
             return False
     return True
+
 
 def plot_errors(errors):
     """
@@ -161,7 +164,7 @@ def main():
 
     plot_errors(errors)
 
-    # parse plot command linde option
+    # parse plot command line option
     if not converged(dataset, weigths):
         plot_errors(errors)
 
