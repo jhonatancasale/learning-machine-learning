@@ -14,6 +14,7 @@
 """
 
 
+from glob import glob as ls
 from numpy import array, dot, random
 import matplotlib.pyplot as plt
 
@@ -142,22 +143,25 @@ def plot_errors(errors):
 def main():
     """
     Assumptions: input files *.dat on same dir
-    For each *dat file in the same dir, build a dataset for then and train
+    For each *.dat file in the same dir, build a dataset for then and train
     the perceptron reporting the results
     """
 
+    files = ls("*.dat")
+    for case in files:
+        dataset = build_dataset(case)
 
-    dataset = build_dataset("and.dat")
+        weights, errors = train(dataset)
+        print("Training convergence process: {}{}".
+              format("Succeed" if converged(dataset, weights) else "Failed",
+                     "\n" if case != files[-1] else ""
+                    )
+             )
 
-    weights, errors = train(dataset)
-    print("Training convergence process: {}".
-          format("Succeed" if converged(dataset, weights) else "Failed")
-         )
 
-
-    #TODO parse plot command line option
-    if not converged(dataset, weights):
-        plot_errors(errors)
+        #TODO parse plot command line option
+        if not converged(dataset, weights):
+            plot_errors(errors)
 
 
 if __name__ == '__main__':
