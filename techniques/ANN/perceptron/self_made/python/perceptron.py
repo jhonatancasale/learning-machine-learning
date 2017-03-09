@@ -64,24 +64,24 @@ def train(training_set, learning_rate=.1, max_iterations=1e4, error=1e-2):
 
 
     # training_set[0] is a tuple, training_set[0][0] is an array
-    weigths = array(random.random(training_set[0][0].size))
+    weights = array(random.random(training_set[0][0].size))
 
     squared_error_list = []
     for i in range(int(max_iterations)):
         squared_error = 0
         for sample, expected_output in training_set:
-            diff = expected_output - f_activation(dot(sample, weigths))
+            diff = expected_output - f_activation(dot(sample, weights))
             squared_error += diff ** 2
-            weigths = weigths - learning_rate * (2 * diff * -sample)
+            weights = weights - learning_rate * (2 * diff * -sample)
         squared_error /= len(training_set)
         if i < 100:
             squared_error_list.append(squared_error)
         if squared_error < error:
-            return (weigths, squared_error_list)
+            return (weights, squared_error_list)
     return (None, squared_error_list)
 
 
-def print_value_table(dataset, weigths):
+def print_value_table(dataset, weights):
     """
     (list, list) -> None
 
@@ -92,18 +92,18 @@ def print_value_table(dataset, weigths):
     """
 
 
-    if weigths is not None:
+    if weights is not None:
         print("Expected\tObtained")
         for sample, expected_output in dataset:
             print("{:<8}\t{}".
                   format(expected_output,
-                         f_activation(dot(sample, weigths)))
+                         f_activation(dot(sample, weights)))
                  )
     else:
         print("Convergence failure")
 
 
-def converged(dataset, weigths):
+def converged(dataset, weights):
     """
     (list, list) -> bool
 
@@ -112,10 +112,10 @@ def converged(dataset, weigths):
     """
 
 
-    if weigths is None:
+    if weights is None:
         return False
     for sample, expected_output in dataset:
-        if expected_output != f_activation(dot(sample, weigths)):
+        if expected_output != f_activation(dot(sample, weights)):
             return False
     return True
 
@@ -149,14 +149,14 @@ def main():
 
     dataset = build_dataset("and.dat")
 
-    weigths, errors = train(dataset)
+    weights, errors = train(dataset)
     print("Training convergence process: {}".
-          format("Succeed" if converged(dataset, weigths) else "Failed")
+          format("Succeed" if converged(dataset, weights) else "Failed")
          )
 
 
     #TODO parse plot command line option
-    if not converged(dataset, weigths):
+    if not converged(dataset, weights):
         plot_errors(errors)
 
 
