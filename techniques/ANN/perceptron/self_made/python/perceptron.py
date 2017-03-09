@@ -39,19 +39,14 @@ def build_dataset(filename):
 
 
     print("Building dataset from {}".format(filename))
-#    ds = []
-#    with open(filename, "r") as f:
-#        next(f) # skip header
-#        for line in f:
-#            values = line.split()
-#            # add [1] to represent theta value
-#            ds.append( (array(values[:-1] + [1]), values[-1]) )
-    return [
-        (array([0, 0, 1]), 0),
-        (array([0, 1, 1]), 0),
-        (array([1, 0, 1]), 0),
-        (array([1, 1, 1]), 1),
-    ]
+    dataset = []
+    with open(filename, "r") as _file:
+        next(_file) # skip header
+        for line in _file:
+            values = [float(field) for field in line.split()]
+            # add [1.0] to represent theta value
+            dataset.append((array(values[:-1] + [1.0]), values[-1]))
+        return dataset
 
 
 def train(training_set, learning_rate=.1, max_iterations=1e4, error=1e-2):
@@ -75,11 +70,8 @@ def train(training_set, learning_rate=.1, max_iterations=1e4, error=1e-2):
     for i in range(int(max_iterations)):
         squared_error = 0
         for sample, expected_output in training_set:
-            # Difference between expected and object output
             diff = expected_output - f_activation(dot(sample, weigths))
             squared_error += diff ** 2
-
-            # Update the values of weights
             weigths = weigths - learning_rate * (2 * diff * -sample)
         squared_error /= len(training_set)
         if i < 100:
@@ -162,9 +154,8 @@ def main():
           format("Succeed" if converged(dataset, weigths) else "Failed")
          )
 
-    plot_errors(errors)
 
-    # parse plot command line option
+    #TODO parse plot command line option
     if not converged(dataset, weigths):
         plot_errors(errors)
 
