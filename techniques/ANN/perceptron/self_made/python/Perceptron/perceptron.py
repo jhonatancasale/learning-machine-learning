@@ -51,7 +51,7 @@ def print_value_table(labels_test: list, prediction: list) -> None:
 
     print("Expected\tObtained")
     for label, pred in zip(labels_test, prediction):
-        print("{:<8}\t{}".format(label,pred))
+        print("{:<8}\t{}".format(label, pred))
 
 
 def test_case(case: str) -> float:
@@ -81,7 +81,7 @@ def main():
     for case in ls("*.dat"):
         accuracy, clf = test_case(case)
         print('Convergence: {}\nAccuracy: {}%\n'.
-              format("Succeed" if clf.converged else "Fail" ,100 * accuracy))
+              format("Succeed" if clf.converged else "Fail", 100 * accuracy))
         print(clf.weights)
 
 
@@ -120,15 +120,6 @@ class Perceptron(object):
         self.converged = False
 
 
-    def weights(self: object) -> list:
-        '''
-        Returns the adjusted values of weights
-        '''
-
-
-        return self.weights
-
-
     def fit(self: object, features_train: list, labels_train: list,
             learning_rate=.1, max_iterations=int(1e4), error=1e-2) -> None:
         '''
@@ -145,13 +136,12 @@ class Perceptron(object):
         for iteration in range(max_iterations):
             squared_error = 0
             for features, label in zip(features_train, labels_train):
-                #diff = label - f_activation(dot(features, self.weights))
                 diff = label - self.net_output(features)
                 squared_error += diff ** 2
                 self.weights = self.weights - learning_rate * (2 * diff * -features)
             if iteration < 100:
                 self.errors.append(squared_error)
-            if squared_error / len(features) < error:
+            if squared_error / len(features_train) < error:
                 self.converged = True
                 break
 
@@ -207,7 +197,7 @@ class Perceptron(object):
         '''
         Calculate when the neuron fires.
 
-        Returns 
+        Returns
             1 - If the given param `input_value` is greater or equal than the
                 (optional given param `threshold`.
             0 - Otherwise.
