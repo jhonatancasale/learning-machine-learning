@@ -56,10 +56,10 @@ def print_value_table(labels_test: list, prediction: list) -> None:
 
 def test_case(case: str) -> float:
     '''
-    Open the file with the given name `case` and parse, split into datasets,
+    Open the file with the given name `case` and parse, split into datasets and
     train the perceptron.
 
-    Returning the value of accuracy obtained after the training process
+    Returns the value of the accuracy obtained after the training process
     '''
 
 
@@ -68,23 +68,22 @@ def test_case(case: str) -> float:
     features_train, features_test, labels_train, labels_test = split_data(case)
     clf.fit(features_train, labels_train)
     pred = clf.predict(features_test)
-    return accuracy_score(labels_test, pred)
+    return accuracy_score(labels_test, pred), clf
 
 
 def main():
     '''
     Assumptions: input files *.dat on same dir
     For each *.dat file in the same dir, build a dataset for then and train
-    the perceptron reporting the results
+    the perceptron reporting the accuracy score obtained
     '''
 
     for case in ls("*.dat"):
-        print('Accuracy: {}%'.format(100 * test_case(case)))
+        accuracy, clf = test_case(case)
+        print('Convergence: {}\nAccuracy: {}%\n'.
+              format("Succeed" if clf.converged else "Fail" ,100 * accuracy))
+        print(clf.weights)
 
-
-    #TODO parse plot command line option
-    #if not converged(dataset, weights):
-    #    plot_errors(errors)
 
 ###############################################################################
 
@@ -106,32 +105,39 @@ def accuracy_score(labels_test: list, prediction: list) -> float:
 
 class Perceptron(object):
     '''
-    error_rows could be parametrized
+    Implements the single neuron (perceptron) Artificial Neural Network (ANN)
     '''
 
+
     def __init__(self: object):
+        '''
+        Naive initializations
+        '''
+
+
         self.weights = []
         self.errors = []
-        self.converged= False
+        self.converged = False
 
 
     def weights(self: object) -> list:
+        '''
+        Returns the adjusted values of weights
+        '''
+
+
         return self.weights
 
 
     def fit(self: object, features_train: list, labels_train: list,
             learning_rate=.1, max_iterations=int(1e4), error=1e-2) -> None:
         '''
-        (list [, double] [, int] [, int]) -> (list, list)
-
-        Operate over the training set until the cost function produces an error
-        lesser than the (optional) given param `error`. In this case, the
-        function returns a tuple with `weights` adjusted values and a list
-        containing (0, 100] computed average errors per iteration
-
-        Otherwise, return a tuple with None and the list with the first 100
-        average errors calculated
+        Operate over the training set until the cost function produces a square
+        error lesser than the (optional) given param `error`. Or until hit the
+        (optional) given param `max_iterations`
         '''
+
+
         self.converged = False
         self.errors = []
         self.weights = array(random.random(features_train[0].size))
@@ -151,14 +157,35 @@ class Perceptron(object):
 
 
     def predict(self: object, features_test: list) -> list:
+        '''
+        Make a prediction to the given param `features_test`
+        '''
+
+
         return [self.net_output(features) for features in features_test]
 
 
     def net_output(self: object, feature_sample: list) -> float:
+        '''
+        Calculate the output of the ANN when presented with the values of the
+        given param `feature_sample`
+
+
+        Returns: The result of the activation function with the pondered
+        weights applied to the values of `feature_sample`
+        '''
+
+
         return self.f_activation(dot(feature_sample, self.weights))
 
 
     def plot_errors(self: object) -> None:
+        '''
+        Generate a plot with the error curve obtained during the last training
+        of the perceptron
+        '''
+
+
         import matplotlib.pyplot as plt
 
 
@@ -167,7 +194,8 @@ class Perceptron(object):
         plt.ylabel("$Value$")
         plt.plot(
             self.errors, "b{}-".format("o" if len(self.errors) < 25 else ""),
-            label="Squared Error in the first {} samples".format(self.errors)
+            label="Squared Error in the first {} samples".
+            format(len(self.errors))
         )
         plt.legend(loc="upper right")
         plt.axis([-.1, len(self.errors), -.1, max(self.errors) + .5])
@@ -176,6 +204,16 @@ class Perceptron(object):
 
 
     def f_activation(self: object, input_value: float, threshold=.5) -> int:
+        '''
+        Calculate when the neuron fires.
+
+        Returns 
+            1 - If the given param `input_value` is greater or equal than the
+                (optional given param `threshold`.
+            0 - Otherwise.
+        '''
+
+
         return 0 if input_value < threshold else 1
 
 
