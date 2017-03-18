@@ -82,7 +82,6 @@ def main():
         accuracy, clf = test_case(case)
         print('Convergence: {}\nAccuracy: {}%\n'.
               format("Succeed" if clf.converged else "Fail", 100 * accuracy))
-        print(clf.weights)
 
 
 ###############################################################################
@@ -136,7 +135,7 @@ class Perceptron(object):
         for iteration in range(max_iterations):
             squared_error = 0
             for features, label in zip(features_train, labels_train):
-                diff = label - self.net_output(features)
+                diff = label - self.neuron_output(features)
                 squared_error += diff ** 2
                 self.weights = self.weights - learning_rate * (2 * diff * -features)
             if iteration < 100:
@@ -152,10 +151,11 @@ class Perceptron(object):
         '''
 
 
-        return [self.net_output(features) for features in features_test]
+        return [self.neuron_output(features) for features in features_test]
 
 
-    def net_output(self: object, feature_sample: list) -> float:
+    def neuron_output(self: object, feature_sample: list,
+                      threshold=.5) -> float:
         '''
         Calculate the output of the ANN when presented with the values of the
         given param `feature_sample`
@@ -163,10 +163,15 @@ class Perceptron(object):
 
         Returns: The result of the activation function with the pondered
         weights applied to the values of `feature_sample`
+
+        Returns
+            1 - If the given param `input_value` is greater or equal than the
+                (optional given param `threshold`.
+            0 - Otherwise.
         '''
 
 
-        return self.f_activation(dot(feature_sample, self.weights))
+        return 0 if dot(feature_sample, self.weights) < threshold else 1
 
 
     def plot_errors(self: object) -> None:
@@ -191,20 +196,6 @@ class Perceptron(object):
         plt.axis([-.1, len(self.errors), -.1, max(self.errors) + .5])
         plt.grid(True)
         plt.show()
-
-
-    def f_activation(self: object, input_value: float, threshold=.5) -> int:
-        '''
-        Calculate when the neuron fires.
-
-        Returns
-            1 - If the given param `input_value` is greater or equal than the
-                (optional given param `threshold`.
-            0 - Otherwise.
-        '''
-
-
-        return 0 if input_value < threshold else 1
 
 
 if __name__ == '__main__':
