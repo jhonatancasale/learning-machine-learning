@@ -69,21 +69,8 @@ class MLP(object):
         '''
 
 
-        self.converged = False
-        self.errors = []
-
-
-        for iteration in range(max_iterations):
-            squared_error = 0
-            for training_sample, label in zip(training_samples, labels_train):
-                diff = label - self.neuron_output(training_sample)
-                squared_error += diff ** 2
-                self.weights = self.weights - learning_rate * (2 * diff * -training_sample)
-            if iteration < max_iterations:
-                self.errors.append(squared_error)
-            if squared_error / len(training_samples) < error:
-                self.converged = True
-                break
+        #TODO
+        pass
 
 
     def predict(self: object, test_samples: list) -> list:
