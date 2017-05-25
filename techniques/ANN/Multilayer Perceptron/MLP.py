@@ -86,9 +86,9 @@ class MLP(object):
                 self.layers['hidden'] += learning_rate * (
                     np.dot(np.matrix(delta_hidden).transpose(), np.matrix(pattern)))
 
-            mean_squared_error = squared_error / len(training_samples)
-            self.errors.append(mean_squared_error)
-            self.error = mean_squared_error
+            average_squared_error = squared_error / len(training_samples)
+            self.errors.append(average_squared_error)
+            self.error = average_squared_error
             if(verbose_error):
                 print(self.error)
 
@@ -111,8 +111,9 @@ class MLP(object):
 
 
     def neuron_output(self: object, net: int) -> float:
-        """
-        """
+        """Returns activation_function (f) of (net)"""
+
+
         return 1 / (1 + exp(-net))
 
 
